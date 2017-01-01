@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Project1_PopularMovies</string>
+    <string name="pop_movies">Pop Movies</string>
+    <string name="movie_detail">Movie Detail</string>
+    <string name="reviews">Reviews</string>
+    <string name="favorite">Favorite</string>
+    <!-- main menu -->
+    <string name="popular">Sort By Most Popular</string>
+    <string name="rated">Sort By Highest Rated</string>
+</resources>

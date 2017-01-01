@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="br.com.eduardo.project1_popularmovies.MovieDetailActivity"
+    android:id="@+id/sv_movie"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:text="TITLE"
+            android:textSize="28sp"
+            android:textColor="#fff"
+            android:background="#009688"
+            android:layout_weight="0.05"
+            android:gravity="left|center"
+            android:paddingLeft="10dp"
+            android:layout_height="90dp" />
+
+        <RelativeLayout
+            android:id="@+id/rl_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/iv_movie_detail"
+                android:src="@mipmap/ic_launcher"
+                android:layout_width="170dp"
+                android:layout_height="200dp"
+                android:scaleType="fitXY"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@id/iv_movie_detail"
+                android:orientation="vertical"
+                android:paddingTop="25dp"
+                android:paddingLeft="10dp">
+
+                <TextView
+                    android:id="@+id/tv_date_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DATE"
+                    android:textSize="24sp"/>
+
+                <TextView
+                    android:id="@+id/tv_vote_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="VOTE/10"
+                    android:textSize="24sp"/>
+
+                <Button
+                    android:text="@string/reviews"
+                    android:layout_width="144dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/bt_reviews"
+                    android:onClick="Review"/>
+
+                <Button
+                    android:text="@string/favorite"
+                    android:layout_width="144dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button"
+                    android:onClick="Favorite"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_overview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:layout_below="@id/iv_movie_detail"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_overview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <ListView
+            android:layout_marginTop="10dp"
+            android:id="@+id/lv_trailers"
+            android:layout_width="wrap_content"
+            android:layout_height="186dp" />
+    </LinearLayout>
+
+</ScrollView>
+
