@@ -2,6 +2,8 @@ package br.com.eduardo.project1_popularmovies.adapter;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +19,10 @@ import java.util.List;
 
 import br.com.eduardo.project1_popularmovies.R;
 import br.com.eduardo.project1_popularmovies.models.Movie;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Eduardo on 31/12/2016.
@@ -71,34 +77,23 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     public class MovieViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener {
 
-        ImageView imgMovie1;
-        ImageView imgMovie2;
+        @BindView(R.id.iv_movie1) ImageView imgMovie1;
 
         public MovieViewHolder(final View itemView) {
             super(itemView);
-
-            imgMovie1 = (ImageView) itemView.findViewById(R.id.iv_movie1);
-            imgMovie2 = (ImageView) itemView.findViewById(R.id.iv_movie2);
+            ButterKnife.bind(this, itemView);
 
             imgMovie1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int clickedPosition = getAdapterPosition();
-                    mOnClickListener.onListItemClick(clickedPosition * 2);
-                }
-            });
-            imgMovie2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int clickedPosition = getAdapterPosition();
-                    mOnClickListener.onListItemClick((clickedPosition * 2) + 1);
+                    mOnClickListener.onListItemClick(clickedPosition);
                 }
             });
         }
 
         void bind(int listIndex) {
-            Picasso.with(mContext).load("http://image.tmdb.org/t/p/w185/" + mDataSet.get(listIndex * 2).poster_path).into(imgMovie1);
-            Picasso.with(mContext).load("http://image.tmdb.org/t/p/w185/" + mDataSet.get((listIndex * 2) + 1).poster_path).into(imgMovie2);
+            Picasso.with(mContext).load("http://image.tmdb.org/t/p/w185/" + mDataSet.get(listIndex).poster_path).into(imgMovie1);
         }
 
         @Override

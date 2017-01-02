@@ -30,4 +30,7 @@ dependencies {
     compile group: 'com.squareup.retrofit', name: 'retrofit', version: '1.9.0'
     compile 'net.simonvt.schematic:schematic:0.6.3'
     testCompile 'junit:junit:4.12'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    compile 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }

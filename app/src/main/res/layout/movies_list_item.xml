@@ -10,11 +10,4 @@
         android:layout_height="278dp"
         android:layout_weight="0.5"
         android:scaleType="fitXY" />
-
-    <ImageView
-        android:id="@+id/iv_movie2"
-        android:layout_width="185dp"
-        android:layout_height="278dp"
-        android:layout_weight="0.5"
-        android:scaleType="fitXY"/>
 </LinearLayout>

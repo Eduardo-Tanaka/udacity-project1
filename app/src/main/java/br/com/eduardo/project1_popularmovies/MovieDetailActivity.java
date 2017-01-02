@@ -11,6 +11,8 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +37,8 @@ import br.com.eduardo.project1_popularmovies.endpoints.MoviesService;
 import br.com.eduardo.project1_popularmovies.models.Result;
 import br.com.eduardo.project1_popularmovies.models.ResultTrailer;
 import br.com.eduardo.project1_popularmovies.models.Trailer;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -43,24 +47,28 @@ import retrofit.client.Response;
 import static android.R.id.list;
 import static java.security.AccessController.getContext;
 
-public class MovieDetailActivity extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity implements TrailerAdapter.ListItemClickListener{
 
     private final String TAG = MovieDetailActivity.class.getSimpleName();
 
-    private TextView mTitle;
-    private ImageView mImage;
-
-    private TextView mDateContent;
-    private TextView mVoteContent;
-
-    private TextView mOverview;
-    private ScrollView mScroll;
-    private RelativeLayout mMovieDetail;
+    @BindView(R.id.tv_title)
+    TextView mTitle;
+    @BindView(R.id.iv_movie_detail)
+    ImageView mImage;
+    @BindView(R.id.tv_date_content)
+    TextView mDateContent;
+    @BindView(R.id.tv_vote_content)
+    TextView mVoteContent;
+    @BindView(R.id.tv_overview)
+    TextView mOverview;
 
     private MoviesService service;
+    private TrailerAdapter mAdapter;
+    @BindView(R.id.lv_trailers)
+    RecyclerView mVideoList;
+
     private ResultTrailer mResultTrailer;
 
-    private LinearLayout mLinearLayout;
     private Toast mToast;
     private String id;
 
@@ -69,27 +77,29 @@ public class MovieDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
 
+        ButterKnife.bind(this);
+
         Intent intent = getIntent();
 
-        mTitle = (TextView) findViewById(R.id.tv_title);
         mTitle.setText(intent.getStringExtra("title"));
 
-        mImage = (ImageView) findViewById(R.id.iv_movie_detail);
         Picasso.with(this).load("http://image.tmdb.org/t/p/w185/" + intent.getStringExtra("image")).into(mImage);
 
-        mDateContent = (TextView) findViewById(R.id.tv_date_content);
         mDateContent.setText(intent.getStringExtra("date"));
 
-        mVoteContent = (TextView) findViewById(R.id.tv_vote_content);
         mVoteContent.setText(intent.getStringExtra("vote")+"/10");
 
-        mOverview = (TextView) findViewById(R.id.tv_overview);
         mOverview.setText(intent.getStringExtra("overview"));
 
         id = intent.getStringExtra("id");
 
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mVideoList.setLayoutManager(layoutManager);
+
+        mVideoList.setHasFixedSize(true);
+
         if(savedInstanceState == null || !savedInstanceState.containsKey("videos")) {
-            Log.i(TAG, "no savedInstanceState");
+            Log.d(TAG, "no savedInstanceState");
 
             if(isOnline()){
                 populateListView(id);
@@ -103,24 +113,14 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
         }
         else {
-            Log.i(TAG, "savedInstanceState");
-            mResultTrailer = savedInstanceState.getParcelable("videos");
-            final TrailerAdapter adapter = new TrailerAdapter(getApplicationContext(), R.layout.trailers_list_item, mResultTrailer.results);
-            ListView mListTrailers = (ListView) findViewById(R.id.lv_trailers);
-            mListTrailers.setAdapter(adapter);
-
-            mListTrailers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Trailer t = adapter.getItem(i);
-
-                    String movieurl = "https://www.youtube.com/watch?v=" + t.key;
-                    Intent tostart = new Intent(Intent.ACTION_VIEW, Uri.parse(movieurl));
-                    startActivity(tostart);
-
-                    adapter.notifyDataSetChanged();
-                }
-            });
+            Log.d(TAG, "savedInstanceState");
+            if(mResultTrailer != null){
+                mResultTrailer = savedInstanceState.getParcelable("videos");
+                mAdapter = new TrailerAdapter(mResultTrailer.results.size(), mResultTrailer.results, MovieDetailActivity.this, MovieDetailActivity.this);
+                mVideoList.setAdapter(mAdapter);
+            } else {
+                populateListView(id);
+            }
         }
     }
 
@@ -138,27 +138,22 @@ public class MovieDetailActivity extends AppCompatActivity {
                 public void success(ResultTrailer resultTrailer, Response response) {
                     Log.d(TAG, resultTrailer.results.size()+"");
                     mResultTrailer = resultTrailer;
-                    final TrailerAdapter adapter = new TrailerAdapter(getApplicationContext(), R.layout.trailers_list_item, mResultTrailer.results);
-                    ListView mListTrailers = (ListView) findViewById(R.id.lv_trailers);
-                    mListTrailers.setAdapter(adapter);
-
-                    mListTrailers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                            Trailer t = adapter.getItem(i);
-                            String movieurl = "https://www.youtube.com/watch?v=" + t.key;
-                            Intent tostart = new Intent(Intent.ACTION_VIEW, Uri.parse(movieurl));
-                            startActivity(tostart);
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
+                    mAdapter = new TrailerAdapter(mResultTrailer.results.size(), mResultTrailer.results, MovieDetailActivity.this, MovieDetailActivity.this);
+                    mVideoList.setAdapter(mAdapter);
                 }
 
                 @Override
                 public void failure(RetrofitError error) {
                     Log.e(TAG, error.getMessage());
+                    Toast.makeText(getApplicationContext(), "Something went wrong, please try again!", Toast.LENGTH_LONG).show();
                 }
             });
+        } else {
+            if(mToast != null){
+                mToast.cancel();
+            }
+            mToast = Toast.makeText(getApplicationContext(), "No internet connectivity...", Toast.LENGTH_LONG);
+            mToast.show();
         }
     }
 
@@ -185,5 +180,13 @@ public class MovieDetailActivity extends AppCompatActivity {
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    @Override
+    public void onListItemClick(int clickedItemIndex) {
+        Trailer t = mResultTrailer.results.get(clickedItemIndex);
+        String movieurl = "https://www.youtube.com/watch?v=" + t.key;
+        Intent tostart = new Intent(Intent.ACTION_VIEW, Uri.parse(movieurl));
+        startActivity(tostart);
     }
 }
