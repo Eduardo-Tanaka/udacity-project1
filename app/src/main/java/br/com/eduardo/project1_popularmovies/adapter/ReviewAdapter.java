@@ -74,7 +74,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         }
 
         void bind(int listIndex) {
-            txtAuthor.setText("Review By: " + mDataSet.get(listIndex).author);
+            txtAuthor.setText(itemView.getResources().getString(R.string.review_by) + " " + mDataSet.get(listIndex).author);
             txtReview.setText(mDataSet.get(listIndex).content);
         }
     }

@@ -32,7 +32,13 @@
         </activity>
         <activity
             android:name=".ReviewActivity"
-            android:label="Reviews"></activity>
+            android:label="Reviews" />
+
+        <provider
+            android:name=".data.generated.MovieContentProvider"
+            android:authorities="br.com.eduardo.project1_popularmovies.data.MovieContentProvider"
+            android:exported="false" />
+
     </application>
 
 </manifest>

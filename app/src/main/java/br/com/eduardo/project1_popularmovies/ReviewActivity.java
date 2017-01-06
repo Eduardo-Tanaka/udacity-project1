@@ -1,10 +1,12 @@
 package br.com.eduardo.project1_popularmovies;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import br.com.eduardo.project1_popularmovies.adapter.ReviewAdapter;
@@ -40,10 +43,14 @@ public class ReviewActivity extends AppCompatActivity {
     @BindView(R.id.lv_reviews) RecyclerView mRecycleView;
     private Toast mToast;
 
+    private ProgressDialog mProgress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
+
+        mProgress = ProgressDialog.show(this, "Reviews", "searching for the reviews", true);
 
         ButterKnife.bind(this);
 
@@ -62,12 +69,10 @@ public class ReviewActivity extends AppCompatActivity {
                 populateListView(id);
             } else {
                 // No internet connectivity
-                if(mToast != null){
-                    mToast.cancel();
-                }
-                mToast = Toast.makeText(getApplicationContext(), "No internet connectivity...", Toast.LENGTH_LONG);
-                mToast.show();
+                error(getString(R.string.no_internet));
             }
+
+            mProgress.dismiss();
         }
         else {
             Log.i(TAG, "savedInstanceState");
@@ -78,6 +83,8 @@ public class ReviewActivity extends AppCompatActivity {
             } else {
                 populateListView(id);
             }
+
+            mProgress.dismiss();
         }
     }
 
@@ -102,16 +109,30 @@ public class ReviewActivity extends AppCompatActivity {
                 @Override
                 public void failure(RetrofitError error) {
                     Log.e(TAG, error.getMessage());
-                    Toast.makeText(getApplicationContext(), "Something went wrong, please try again!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.retrofit_error), Toast.LENGTH_LONG).show();
                 }
             });
         } else {
-            if(mToast != null){
+           error(getString(R.string.no_internet));
+        }
+    }
+
+    private void error(String message) {
+        /*if(mToast != null){
                 mToast.cancel();
             }
-            mToast = Toast.makeText(getApplicationContext(), "No internet connectivity...", Toast.LENGTH_LONG);
-            mToast.show();
-        }
+            mToast = Toast.makeText(getApplicationContext(), getString(R.string.no_internet), Toast.LENGTH_LONG);
+            mToast.show();*/
+        Snackbar snackbar = Snackbar
+            .make(findViewById(R.id.activity_review), message, Snackbar.LENGTH_LONG)
+            .setAction(getString(R.string.retry), new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    populateListView(id);
+                }
+            });
+
+        snackbar.show();
     }
 
     @Override

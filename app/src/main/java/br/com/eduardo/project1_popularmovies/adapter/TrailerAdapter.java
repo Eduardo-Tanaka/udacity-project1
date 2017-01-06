@@ -86,7 +86,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
         }
 
         void bind(int listIndex) {
-            txtTrailer.setText("Trailer " + (listIndex + 1));
+            txtTrailer.setText(itemView.getResources().getString(R.string.trailer) + " " + (listIndex + 1));
         }
 
         @Override

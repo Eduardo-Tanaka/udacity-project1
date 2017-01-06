@@ -1,14 +1,17 @@
-
-
-
 package br.com.eduardo.project1_popularmovies;
 
 import android.app.ActionBar;
+import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.OperationApplicationException;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.RemoteException;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,7 +37,10 @@ import com.squareup.picasso.Picasso;
 
 import br.com.eduardo.project1_popularmovies.adapter.MovieAdapter;
 import br.com.eduardo.project1_popularmovies.adapter.TrailerAdapter;
+import br.com.eduardo.project1_popularmovies.data.MovieColumns;
+import br.com.eduardo.project1_popularmovies.data.MovieContentProvider;
 import br.com.eduardo.project1_popularmovies.endpoints.MoviesService;
+import br.com.eduardo.project1_popularmovies.models.Movie;
 import br.com.eduardo.project1_popularmovies.models.Result;
 import br.com.eduardo.project1_popularmovies.models.ResultTrailer;
 import br.com.eduardo.project1_popularmovies.models.Trailer;
@@ -72,6 +79,13 @@ public class MovieDetailActivity extends AppCompatActivity implements TrailerAda
     private Toast mToast;
     private String id;
 
+    private Movie mMovie;
+
+    @BindView(R.id.button)
+    Button mFav;
+    @BindView(R.id.btnUnfavorite)
+    Button mUnFav;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,17 +95,26 @@ public class MovieDetailActivity extends AppCompatActivity implements TrailerAda
 
         Intent intent = getIntent();
 
-        mTitle.setText(intent.getStringExtra("title"));
+        mMovie = new Movie(intent.getStringExtra("image"), intent.getStringExtra("title"), intent.getStringExtra("vote"),
+                intent.getStringExtra("overview"), intent.getStringExtra("date"), intent.getStringExtra("id"));
 
-        Picasso.with(this).load("http://image.tmdb.org/t/p/w185/" + intent.getStringExtra("image")).into(mImage);
+        Cursor cursor = MovieDetailActivity.this.getContentResolver().query(MovieContentProvider.Movies.withId(mMovie.id), null, null, null, null);
+        if(cursor.getCount() == 1){
+            mUnFav.setVisibility(View.VISIBLE);
+            mFav.setVisibility(View.INVISIBLE);
+        }
 
-        mDateContent.setText(intent.getStringExtra("date"));
+        mTitle.setText(mMovie.title);
 
-        mVoteContent.setText(intent.getStringExtra("vote")+"/10");
+        Picasso.with(this).load("http://image.tmdb.org/t/p/w185/" + mMovie.poster_path).into(mImage);
 
-        mOverview.setText(intent.getStringExtra("overview"));
+        mDateContent.setText(mMovie.release_date);
 
-        id = intent.getStringExtra("id");
+        mVoteContent.setText(mMovie.vote_average + "/10");
+
+        mOverview.setText(mMovie.overview);
+
+        id = mMovie.id;
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mVideoList.setLayoutManager(layoutManager);
@@ -101,16 +124,7 @@ public class MovieDetailActivity extends AppCompatActivity implements TrailerAda
         if(savedInstanceState == null || !savedInstanceState.containsKey("videos")) {
             Log.d(TAG, "no savedInstanceState");
 
-            if(isOnline()){
-                populateListView(id);
-            } else {
-                // No internet connectivity
-                if(mToast != null){
-                    mToast.cancel();
-                }
-                mToast = Toast.makeText(getApplicationContext(), "No internet connectivity...", Toast.LENGTH_LONG);
-                mToast.show();
-            }
+            populateListView(id);
         }
         else {
             Log.d(TAG, "savedInstanceState");
@@ -145,15 +159,11 @@ public class MovieDetailActivity extends AppCompatActivity implements TrailerAda
                 @Override
                 public void failure(RetrofitError error) {
                     Log.e(TAG, error.getMessage());
-                    Toast.makeText(getApplicationContext(), "Something went wrong, please try again!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.retrofit_error), Toast.LENGTH_LONG).show();
                 }
             });
         } else {
-            if(mToast != null){
-                mToast.cancel();
-            }
-            mToast = Toast.makeText(getApplicationContext(), "No internet connectivity...", Toast.LENGTH_LONG);
-            mToast.show();
+            error(getString(R.string.no_internet_trailers));
         }
     }
 
@@ -164,15 +174,60 @@ public class MovieDetailActivity extends AppCompatActivity implements TrailerAda
     }
 
     public void Favorite(View v){
-        Intent intent = new Intent(MovieDetailActivity.this, ReviewActivity.class);
-        intent.putExtra("id", id);
-        startActivity(intent);
+        ContentValues cv = new ContentValues();
+        cv.put(MovieColumns.DATE, mMovie.release_date);
+        cv.put(MovieColumns.TITLE, mMovie.title);
+        cv.put(MovieColumns.POSTER, mMovie.poster_path);
+        cv.put(MovieColumns.RATING, mMovie.vote_average);
+        cv.put(MovieColumns.SYNOPSIS, mMovie.overview);
+        cv.put(MovieColumns._ID, mMovie.id);
+        Log.d(TAG, "MOVIE ID: " + mMovie.id);
+        try{
+            MovieDetailActivity.this.getContentResolver().insert(MovieContentProvider.Movies.withId(mMovie.id), cv);
+        }
+        catch(Exception e){
+            Log.e(TAG, e.getMessage());
+        }
+
+        mUnFav.setVisibility(View.VISIBLE);
+        mFav.setVisibility(View.INVISIBLE);
+    }
+
+    public void Unfavorite(View v){
+        Log.d(TAG, "MOVIE ID: " + mMovie.id);
+        try{
+            MovieDetailActivity.this.getContentResolver().delete(MovieContentProvider.Movies.withId(mMovie.id), null, null);
+        }
+        catch(Exception e){
+            Log.e(TAG, e.getMessage());
+        }
+
+        mFav.setVisibility(View.VISIBLE);
+        mUnFav.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("videos", mResultTrailer);
         super.onSaveInstanceState(outState);
+    }
+
+    private void error(String message) {
+        /*if(mToast != null){
+                mToast.cancel();
+            }
+            mToast = Toast.makeText(getApplicationContext(), getString(R.string.no_internet), Toast.LENGTH_LONG);
+            mToast.show();*/
+        Snackbar snackbar = Snackbar
+            .make(findViewById(R.id.sv_movie), message, Snackbar.LENGTH_LONG)
+            .setAction(getString(R.string.retry), new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    populateListView(id);
+                }
+            });
+
+        snackbar.show();
     }
 
     public boolean isOnline() {
