@@ -5,4 +5,9 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="colorPrimaryLight">#D1C4E9</color>
+
+    <color name="trailer_text_color">#514b4b</color>
+
+    <color name="movie_title">#fff</color>
+    <color name="movie_title_background">#009688</color>
 </resources>

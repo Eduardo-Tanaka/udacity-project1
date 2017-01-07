@@ -76,13 +76,10 @@ public class ReviewActivity extends AppCompatActivity {
         }
         else {
             Log.i(TAG, "savedInstanceState");
-            if(mResultReview != null){
-                mResultReview = savedInstanceState.getParcelable("reviews");
-                mAdapter = new ReviewAdapter(mResultReview.results.size(), mResultReview.results, ReviewActivity.this);
-                mRecycleView.setAdapter(mAdapter);
-            } else {
-                populateListView(id);
-            }
+
+            mResultReview = savedInstanceState.getParcelable("reviews");
+            mAdapter = new ReviewAdapter(mResultReview.results.size(), mResultReview.results, ReviewActivity.this);
+            mRecycleView.setAdapter(mAdapter);
 
             mProgress.dismiss();
         }
@@ -137,7 +134,9 @@ public class ReviewActivity extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("reviews", mResultReview);
+        if(mResultReview != null){
+            outState.putParcelable("reviews", mResultReview);
+        }
         super.onSaveInstanceState(outState);
     }
 

@@ -16,15 +16,15 @@
 
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/movie_title_width"
             tools:text="TITLE"
-            android:textSize="28sp"
-            android:textColor="#fff"
-            android:background="#009688"
+            android:textSize="@dimen/movie_title_size"
+            android:textColor="@color/movie_title"
+            android:background="@color/movie_title_background"
             android:layout_weight="0.05"
             android:gravity="left|center"
-            android:paddingLeft="10dp"
-            android:layout_height="90dp"
+            android:paddingLeft="@dimen/movie_title_padding"
+            android:layout_height="@dimen/movie_title_height"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -33,74 +33,74 @@
         <ImageView
             android:id="@+id/iv_movie_detail"
             android:src="@mipmap/ic_launcher"
-            android:layout_width="170dp"
-            android:layout_height="200dp"
+            android:layout_width="@dimen/movie_image_width"
+            android:layout_height="@dimen/movie_image_height"
             android:scaleType="fitXY"
             app:layout_constraintTop_toBottomOf="@+id/tv_title"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="@dimen/movie_image_margin"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp" />
+            android:layout_marginLeft="@dimen/movie_image_margin"
+            android:layout_marginTop="@dimen/movie_image_margin" />
 
         <TextView
             android:id="@+id/tv_date_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="DATE"
-            android:textSize="24sp"
+            android:textSize="@dimen/movie_date_size"
             app:layout_constraintLeft_toRightOf="@+id/iv_movie_detail"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/movie_date_margin_top"
             app:layout_constraintTop_toBottomOf="@+id/tv_title"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp" />
+            android:layout_marginStart="@dimen/movie_margin"
+            android:layout_marginLeft="@dimen/movie_margin" />
 
         <TextView
             android:id="@+id/tv_vote_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="VOTE/10"
-            android:textSize="24sp"
+            android:textSize="@dimen/movie_rating_size"
             app:layout_constraintLeft_toRightOf="@+id/iv_movie_detail"
             app:layout_constraintTop_toBottomOf="@+id/tv_date_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp" />
+            android:layout_marginStart="@dimen/movie_margin"
+            android:layout_marginLeft="@dimen/movie_margin"
+            android:layout_marginTop="@dimen/movie_margin" />
 
         <Button
             android:text="@string/reviews"
-            android:layout_width="144dp"
+            android:layout_width="@dimen/movie_button_width"
             android:layout_height="wrap_content"
             android:id="@+id/bt_reviews"
             android:onClick="Review"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/movie_margin"
             app:layout_constraintTop_toBottomOf="@+id/tv_vote_content"
             app:layout_constraintLeft_toRightOf="@+id/iv_movie_detail"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp" />
+            android:layout_marginStart="@dimen/movie_margin"
+            android:layout_marginLeft="@dimen/movie_margin" />
 
         <Button
             android:text="@string/favorite"
-            android:layout_width="144dp"
+            android:layout_width="@dimen/movie_button_width"
             android:layout_height="wrap_content"
             android:id="@+id/button"
             android:onClick="Favorite"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/movie_margin"
             app:layout_constraintTop_toBottomOf="@+id/bt_reviews"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/movie_margin"
             app:layout_constraintLeft_toRightOf="@+id/iv_movie_detail"
-            android:layout_marginLeft="8dp" />
+            android:layout_marginLeft="@dimen/movie_margin" />
 
         <Button
-            android:text="unfavorite"
-            android:layout_width="144dp"
+            android:text="@string/unfavorite"
+            android:layout_width="@dimen/movie_button_width"
             android:layout_height="wrap_content"
             android:id="@+id/btnUnfavorite"
             android:onClick="Unfavorite"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/movie_margin"
             app:layout_constraintTop_toBottomOf="@+id/bt_reviews"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/movie_margin"
             app:layout_constraintLeft_toRightOf="@+id/iv_movie_detail"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="@dimen/movie_margin"
             android:visibility="invisible"/>
 
         <TextView
@@ -108,30 +108,30 @@
             android:id="@+id/tv_overview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:textSize="@dimen/movie_overview_size"
+            android:paddingLeft="@dimen/movie_margin"
+            android:paddingRight="@dimen/movie_margin"
             app:layout_constraintTop_toBottomOf="@+id/button"
-            android:layout_marginTop="32dp"
-            android:layout_marginStart="20dp"
+            android:layout_marginTop="@dimen/movie_overview_margin_top"
+            android:layout_marginStart="@dimen/movie_overview_margin"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginLeft="@dimen/movie_overview_margin"
+            android:layout_marginEnd="@dimen/movie_overview_margin"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="20dp" />
+            android:layout_marginRight="@dimen/movie_overview_margin" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/lv_trailers"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/movie_recycler_view_margin_top"
             app:layout_constraintTop_toBottomOf="@+id/tv_overview"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="@dimen/movie_recycler_view_margin"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="@dimen/movie_recycler_view_margin"
+            android:layout_marginEnd="@dimen/movie_recycler_view_margin"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="16dp" />
+            android:layout_marginRight="@dimen/movie_recycler_view_margin" />
     </android.support.constraint.ConstraintLayout>
 
 </ScrollView>

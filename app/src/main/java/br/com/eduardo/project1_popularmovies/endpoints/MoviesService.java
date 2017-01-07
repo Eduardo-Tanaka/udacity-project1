@@ -14,7 +14,7 @@ import retrofit.http.Path;
 public interface MoviesService {
 
     // Replace your api key here!
-    String KEY = "";
+    String KEY = "a5a7ec63fb3fc78cf7a16e8e2b98991d";
 
     @GET("/popular?api_key=" + KEY)
     void getMostPopularMovies(Callback<Result> callback);

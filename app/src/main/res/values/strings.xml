@@ -4,16 +4,23 @@
     <string name="movie_detail">Movie Detail</string>
     <string name="reviews">Reviews</string>
     <string name="favorite">Favorite</string>
+    <string name="unfavorite">Unfavorite</string>
+
+    <string name="trailer">TRAILER</string>
+    <string name="review_by">Review By:</string>
+    
     <!-- main menu -->
     <string name="popular">Sort By Most Popular</string>
     <string name="rated">Sort By Highest Rated</string>
     <string name="sort_favorite">Sort By Favorites</string>
+
     <!-- error messages -->
     <string name="no_internet">No internet connectivity...</string>
     <string name="no_internet_trailers">No internet connectivity... will not display the trailers</string>
     <string name="retrofit_error">Something went wrong, please try again!</string>
-    <string name="trailer">Trailer</string>
-    <string name="review_by">Review By:</string>
+    
+    <string name="youtube">Please install a web browser or youtube app</string>
+
     <!-- snackbar -->
     <string name="retry">RETRY</string>
 </resources>

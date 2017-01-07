@@ -68,19 +68,17 @@ public class MainActivity extends AppCompatActivity  implements MovieAdapter.Lis
         }
         else {
             Log.i(TAG, "savedInstanceState");
-            if(mResult != null){
-                mResult = savedInstanceState.getParcelable("movies");
-                mAdapter = new MovieAdapter(mResult.results.size(), mResult.results, MainActivity.this, MainActivity.this);
-                mMoviesList.setAdapter(mAdapter);
-            } else {
-                populateRecyclerView(searchType);
-            }
+            mResult = savedInstanceState.getParcelable("movies");
+            mAdapter = new MovieAdapter(mResult.results.size(), mResult.results, MainActivity.this, MainActivity.this);
+            mMoviesList.setAdapter(mAdapter);
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("movies", mResult);
+        if(mResult != null){
+            outState.putParcelable("movies", mResult);
+        }
         super.onSaveInstanceState(outState);
     }
 

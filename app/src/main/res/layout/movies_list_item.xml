@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/iv_movie1"
-        android:layout_width="185dp"
-        android:layout_height="278dp"
+        android:layout_width="@dimen/movie_main_poster_width"
+        android:layout_height="@dimen/movie_main_poster_heigth"
         android:layout_weight="0.5"
         android:scaleType="fitXY" />
 </LinearLayout>

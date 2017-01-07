@@ -1,47 +1,32 @@
 package br.com.eduardo.project1_popularmovies;
 
-import android.app.ActionBar;
-import android.content.ContentProviderOperation;
+import android.content.AsyncQueryHandler;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.RemoteException;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import br.com.eduardo.project1_popularmovies.adapter.MovieAdapter;
 import br.com.eduardo.project1_popularmovies.adapter.TrailerAdapter;
 import br.com.eduardo.project1_popularmovies.data.MovieColumns;
 import br.com.eduardo.project1_popularmovies.data.MovieContentProvider;
 import br.com.eduardo.project1_popularmovies.endpoints.MoviesService;
 import br.com.eduardo.project1_popularmovies.models.Movie;
-import br.com.eduardo.project1_popularmovies.models.Result;
 import br.com.eduardo.project1_popularmovies.models.ResultTrailer;
 import br.com.eduardo.project1_popularmovies.models.Trailer;
 import butterknife.BindView;
@@ -50,9 +35,6 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
-import static android.R.id.list;
-import static java.security.AccessController.getContext;
 
 public class MovieDetailActivity extends AppCompatActivity implements TrailerAdapter.ListItemClickListener{
 
@@ -128,13 +110,10 @@ public class MovieDetailActivity extends AppCompatActivity implements TrailerAda
         }
         else {
             Log.d(TAG, "savedInstanceState");
-            if(mResultTrailer != null){
-                mResultTrailer = savedInstanceState.getParcelable("videos");
-                mAdapter = new TrailerAdapter(mResultTrailer.results.size(), mResultTrailer.results, MovieDetailActivity.this, MovieDetailActivity.this);
-                mVideoList.setAdapter(mAdapter);
-            } else {
-                populateListView(id);
-            }
+
+            mResultTrailer = savedInstanceState.getParcelable("videos");
+            mAdapter = new TrailerAdapter(mResultTrailer.results.size(), mResultTrailer.results, MovieDetailActivity.this, MovieDetailActivity.this);
+            mVideoList.setAdapter(mAdapter);
         }
     }
 
@@ -174,6 +153,15 @@ public class MovieDetailActivity extends AppCompatActivity implements TrailerAda
     }
 
     public void Favorite(View v){
+        AsyncQueryHandler queryHandler = new AsyncQueryHandler(getContentResolver()) {
+            @Override
+            protected void onInsertComplete(int token, Object cookie, Uri uri) {
+                super.onInsertComplete(token, cookie, uri);
+                mFav.setVisibility(View.INVISIBLE);
+                mUnFav.setVisibility(View.VISIBLE);
+            }
+        };
+
         ContentValues cv = new ContentValues();
         cv.put(MovieColumns.DATE, mMovie.release_date);
         cv.put(MovieColumns.TITLE, mMovie.title);
@@ -182,33 +170,29 @@ public class MovieDetailActivity extends AppCompatActivity implements TrailerAda
         cv.put(MovieColumns.SYNOPSIS, mMovie.overview);
         cv.put(MovieColumns._ID, mMovie.id);
         Log.d(TAG, "MOVIE ID: " + mMovie.id);
-        try{
-            MovieDetailActivity.this.getContentResolver().insert(MovieContentProvider.Movies.withId(mMovie.id), cv);
-        }
-        catch(Exception e){
-            Log.e(TAG, e.getMessage());
-        }
 
-        mUnFav.setVisibility(View.VISIBLE);
-        mFav.setVisibility(View.INVISIBLE);
+        queryHandler.startInsert(200, null, MovieContentProvider.Movies.withId(mMovie.id), cv);
     }
 
     public void Unfavorite(View v){
-        Log.d(TAG, "MOVIE ID: " + mMovie.id);
-        try{
-            MovieDetailActivity.this.getContentResolver().delete(MovieContentProvider.Movies.withId(mMovie.id), null, null);
-        }
-        catch(Exception e){
-            Log.e(TAG, e.getMessage());
-        }
+        AsyncQueryHandler queryHandler = new AsyncQueryHandler(getContentResolver()) {
+            @Override
+            protected void onDeleteComplete(int token, Object cookie, int result) {
+                super.onDeleteComplete(token, cookie, result);
+                mFav.setVisibility(View.VISIBLE);
+                mUnFav.setVisibility(View.INVISIBLE);
+            }
+        };
 
-        mFav.setVisibility(View.VISIBLE);
-        mUnFav.setVisibility(View.INVISIBLE);
+        Log.d(TAG, "MOVIE ID: " + mMovie.id);
+        queryHandler.startDelete(300, null, MovieContentProvider.Movies.withId(mMovie.id), null, null);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("videos", mResultTrailer);
+        if(mResultTrailer != null){
+            outState.putParcelable("videos", mResultTrailer);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -242,6 +226,11 @@ public class MovieDetailActivity extends AppCompatActivity implements TrailerAda
         Trailer t = mResultTrailer.results.get(clickedItemIndex);
         String movieurl = "https://www.youtube.com/watch?v=" + t.key;
         Intent tostart = new Intent(Intent.ACTION_VIEW, Uri.parse(movieurl));
-        startActivity(tostart);
+        // Verify that the intent will resolve to an activity
+        if (tostart.resolveActivity(getPackageManager()) != null) {
+            startActivity(tostart);
+        } else {
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.youtube), Toast.LENGTH_LONG).show();
+        }
     }
 }

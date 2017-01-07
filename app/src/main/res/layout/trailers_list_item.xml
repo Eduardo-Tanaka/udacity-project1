@@ -4,21 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_item_selector">
+
     <ImageView
         android:id="@+id/iv_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_media_play"
         android:layout_gravity="center"
-        android:paddingLeft="30dp" />
+        android:paddingLeft="@dimen/trailer_image_paddding" />
     <TextView
         android:id="@+id/tv_trailer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="TRAILER"
+        android:textSize="@dimen/trailer_text_size"
+        android:text="@string/trailer"
         android:gravity="center_vertical"
-        android:paddingLeft="50dp"
-        android:textColor="#514b4b"
-        android:layout_marginTop="4dp"/>
+        android:paddingLeft="@dimen/trailer_text_padding"
+        android:textColor="@color/trailer_text_color"
+        android:layout_marginTop="@dimen/trailer_text_margin"/>
 </LinearLayout>

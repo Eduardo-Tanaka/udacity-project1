@@ -13,7 +13,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/pop_movies">
+            android:label="@string/pop_movies"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,9 +31,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
         <activity
             android:name=".ReviewActivity"
-            android:label="Reviews" />
+            android:label="Reviews">
+        </activity>
 
         <provider
             android:name=".data.generated.MovieContentProvider"
