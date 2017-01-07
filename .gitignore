@@ -38,3 +38,5 @@ captures/
 
 # Keystore files
 *.jks
+
+app/src/main/java/br/com/eduardo/project1_popularmovies/Secrets.java

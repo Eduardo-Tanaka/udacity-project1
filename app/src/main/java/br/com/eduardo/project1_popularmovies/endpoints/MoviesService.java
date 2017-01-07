@@ -1,5 +1,6 @@
 package br.com.eduardo.project1_popularmovies.endpoints;
 
+import br.com.eduardo.project1_popularmovies.Secret;
 import br.com.eduardo.project1_popularmovies.models.Result;
 import br.com.eduardo.project1_popularmovies.models.ResultReview;
 import br.com.eduardo.project1_popularmovies.models.ResultTrailer;
@@ -14,7 +15,7 @@ import retrofit.http.Path;
 public interface MoviesService {
 
     // Replace your api key here!
-    String KEY = "a5a7ec63fb3fc78cf7a16e8e2b98991d";
+    String KEY = Secret.KEY;
 
     @GET("/popular?api_key=" + KEY)
     void getMostPopularMovies(Callback<Result> callback);
